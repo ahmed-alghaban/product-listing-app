@@ -6,17 +6,20 @@ import {
     InputLabel,
     Select,
     MenuItem,
-    Paper,
     TextField,
-    InputAdornment
+    InputAdornment,
+    useMediaQuery,
 } from '@mui/material';
 import SearchIcon from '@mui/icons-material/Search';
 
+const Header = ({ categories, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery }) => {
+    // Responsive design - using Material-UI's useMediaQuery hook
+    const isMobile = useMediaQuery('(max-width:600px)');
 
-const Header = ({ categories, selectedCategory, setSelectedCategory, searchQuery, setSearchQuery,handleCategoryChange,handleSearchBarChange }) => {
     return (
         <Box
             display="flex"
+            flexDirection={isMobile ? "column" : "row"}  // Stack vertically on mobile
             alignItems="center"
             justifyContent="space-between"
             p={2}
@@ -26,7 +29,13 @@ const Header = ({ categories, selectedCategory, setSelectedCategory, searchQuery
             mb={4}
         >
             {/* Category Filter */}
-            <FormControl sx={{ minWidth: 180 }} size="small">
+            <FormControl
+                sx={{
+                    minWidth: isMobile ? "100%" : 180,  // 100% width for mobile
+                    mb: isMobile ? 2 : 0,               // Add margin-bottom on mobile
+                }}
+                size="small"
+            >
                 <InputLabel>Filter by Category</InputLabel>
                 <Select
                     value={selectedCategory}
@@ -42,14 +51,15 @@ const Header = ({ categories, selectedCategory, setSelectedCategory, searchQuery
                 </Select>
             </FormControl>
 
+            {/* Search Bar */}
             <TextField
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search products..."
                 size="small"
                 sx={{
-                    width: 300,
-                    ml: 2,
+                    width: isMobile ? "100%" : 300,  // 100% width for mobile
+                    ml: isMobile ? 0 : 2,             // Remove left margin on mobile
                     backgroundColor: 'white',
                     borderRadius: 2,
                     boxShadow: 2,

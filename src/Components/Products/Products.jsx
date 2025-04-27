@@ -12,6 +12,8 @@ const Products = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
+    const isMobile = useMediaQuery('(max-width:600px)');
+    const isTablet = useMediaQuery('(max-width:900px)');
 
     const clearPriceFilter = () => {
         setMinPrice('');
@@ -44,10 +46,6 @@ const Products = () => {
         });
     }, [products, selectedCategory, searchQuery, minPrice, maxPrice]);
 
-    // Determine the screen size using useMediaQuery hook
-    const isMobile = useMediaQuery('(max-width:600px)');
-    const isTablet = useMediaQuery('(max-width:900px)');
-
     return (
         <>
             <Box>
@@ -64,9 +62,9 @@ const Products = () => {
                 <Box
                     sx={{
                         display: "flex",
+                        flexDirection: isMobile ? 'column' : 'row', // Stack elements on mobile, row on larger screens
                         mt: 4,
                         px: 3,
-                        flexDirection: isMobile ? 'column' : 'row', // Stack elements on mobile
                     }}
                 >
                     {/* Sidebar - fixed at the top on mobile or side by side on larger screens */}
@@ -94,7 +92,15 @@ const Products = () => {
                     )}
 
                     {/* Products Section */}
-                    <Box sx={{ flexGrow: 1, ml: isMobile ? 0 : 10 }}>
+                    <Box
+                        sx={{
+                            flexGrow: 1,
+                            ml: isMobile || isTablet ? 0 : 10,
+                            mt: isMobile ? 3 : 0,
+                            display: 'flex',
+                            flexDirection: 'column',
+                        }}
+                    >
                         <Grid container spacing={3}>
                             {filteredProducts.map((product) => (
                                 <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
