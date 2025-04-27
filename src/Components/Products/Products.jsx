@@ -1,14 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react'
-import axios from "axios"
-import { Box, Grid } from '@mui/material'
-import Product from './Product'
-import Header from '../Header/Header'
-import SideNavbar from '../SideNavbar/SideNavbar'
+import React, { useEffect, useMemo, useState } from 'react';
+import axios from "axios";
+import { Box, Grid, useMediaQuery } from '@mui/material'; // Added useMediaQuery for responsive design
+import Product from './Product';
+import Header from '../Header/Header';
+import SideNavbar from '../SideNavbar/SideNavbar';
 
 const Products = () => {
-    const [products, setProducts] = useState([])
-    const [categories, setCategories] = useState([])
-    const [selectedCategory, setSelectedCategory] = useState('')
+    const [products, setProducts] = useState([]);
+    const [categories, setCategories] = useState([]);
+    const [selectedCategory, setSelectedCategory] = useState('');
     const [searchQuery, setSearchQuery] = useState('');
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
@@ -44,7 +44,9 @@ const Products = () => {
         });
     }, [products, selectedCategory, searchQuery, minPrice, maxPrice]);
 
-
+    // Determine the screen size using useMediaQuery hook
+    const isMobile = useMediaQuery('(max-width:600px)');
+    const isTablet = useMediaQuery('(max-width:900px)');
 
     return (
         <>
@@ -64,32 +66,35 @@ const Products = () => {
                         display: "flex",
                         mt: 4,
                         px: 3,
+                        flexDirection: isMobile ? 'column' : 'row', // Stack elements on mobile
                     }}
                 >
-                    {/* Sidebar - fixed at the top */}
-                    <Box
-                        sx={{
-                            width: 260, // Width of the sidebar
-                            backgroundColor: "white", // Background color of sidebar
-                            borderRadius: 3, // Smooth corners
-                            boxShadow: 2, // Shadow to make the sidebar pop
-                            p: 2, // Padding inside sidebar for spacing
-                            height: "fit-content", // Adjust the height to content
-                            mt: 2,
-                            flexShrink: 0, // Sidebar doesn't shrink
-                        }}
-                    >
-                        <SideNavbar
-                            minPrice={minPrice}
-                            setMinPrice={setMinPrice}
-                            maxPrice={maxPrice}
-                            setMaxPrice={setMaxPrice}
-                            clearPriceFilter={clearPriceFilter}
-                        />
-                    </Box>
+                    {/* Sidebar - fixed at the top on mobile or side by side on larger screens */}
+                    {!isMobile && (
+                        <Box
+                            sx={{
+                                width: 260,
+                                backgroundColor: "white",
+                                borderRadius: 3,
+                                boxShadow: 2,
+                                p: 2,
+                                height: "fit-content",
+                                mt: 2,
+                                flexShrink: 0,
+                            }}
+                        >
+                            <SideNavbar
+                                minPrice={minPrice}
+                                setMinPrice={setMinPrice}
+                                maxPrice={maxPrice}
+                                setMaxPrice={setMaxPrice}
+                                clearPriceFilter={clearPriceFilter}
+                            />
+                        </Box>
+                    )}
 
                     {/* Products Section */}
-                    <Box sx={{ flexGrow: 1, ml: 10 }}>
+                    <Box sx={{ flexGrow: 1, ml: isMobile ? 0 : 10 }}>
                         <Grid container spacing={3}>
                             {filteredProducts.map((product) => (
                                 <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
@@ -100,9 +105,8 @@ const Products = () => {
                     </Box>
                 </Box>
             </Box>
-
         </>
-    )
-}
+    );
+};
 
-export default Products
+export default Products;
